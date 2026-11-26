@@ -28,7 +28,9 @@ end
 
 local function fetchAsset(url, cacheName)
     if not (writefile and getcustomasset) then return nil end
-    local ext = url:match("%.([%w]+)[?#]?") or "bin"\n    local path = "MinecraftClassicCache/" .. cacheName .. "." .. ext
+    local ext = url:match("%.([%w]+)[?#]?") or "bin"
+    local path = "MinecraftClassicCache/" .. cacheName .. "." .. ext
+    if makefolder then pcall(makefolder, "MinecraftClassicCache") end
     if isfile and isfile(path) then
         local ok, asset = pcall(getcustomasset, path)
         if ok then return asset end
@@ -37,7 +39,6 @@ local function fetchAsset(url, cacheName)
     if not req then return nil end
     local ok, response = pcall(req, {Url = url, Method = "GET"})
     if not ok or not response or response.StatusCode ~= 200 or not response.Body then return nil end
-    if makefolder then pcall(makefolder, "MinecraftClassicCache") end
     local wrote = pcall(writefile, path, response.Body)
     if not wrote then return nil end
     local got, asset = pcall(getcustomasset, path)
